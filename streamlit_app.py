@@ -111,7 +111,7 @@ fig_system = px.scatter(
 
 fig_system.update_layout(
     xaxis=dict(range=[-40, net_prod_max]),  # Ensure the x-axis starts at 0
-    yaxis=dict(range=[2.9, system_power_max])  # Ensure the y-axis starts at 0
+    yaxis=dict(range=[2.91, system_power_max])  # Ensure the y-axis starts at 0
 )
 
 # Display both plots
