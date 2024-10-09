@@ -89,6 +89,7 @@ fig_stack = px.scatter(
 fig_stack.update_layout(
     xaxis=dict(range=[-10, net_prod_max]),  # Starting at -10 to avoid cutting
     yaxis=dict(range=[2.9, power_max])  # Ensure the y-axis starts at 0
+    legend=dict(font=dict(size=18))  
 )
 
 # Scatter plot for system data
@@ -112,6 +113,7 @@ fig_system = px.scatter(
 fig_system.update_layout(
     xaxis=dict(range=[-10, net_prod_max]),  # Starting at -10 to avoid cutting
     yaxis=dict(range=[2.9, power_max])  # Ensure the y-axis starts at 0
+    legend=dict(font=dict(size=18))  
 )
 
 # Display both plots
