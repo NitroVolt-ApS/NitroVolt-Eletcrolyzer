@@ -81,7 +81,7 @@ fig_stack = px.scatter(
         'average power consumption by stack combined': 'Avg Power Consumption by Stack (kWh/Nm³)'
     },
     template='plotly_white',
-    height=1050,  # Increased height
+    height=850,  # Increased height
     width=1050   # Increased width
 )
 
@@ -104,7 +104,7 @@ fig_system = px.scatter(
         'average power consumption by system': 'Avg Power Consumption by System (kWh/Nm³)'
     },
     template='plotly_white',
-    height=1050,  # Increased height
+    height=850,  # Increased height
     width=1050   # Increased width
 )
 
