@@ -52,27 +52,21 @@ net_prod_min, net_prod_max = st.sidebar.slider(
 df_filtered = df_filtered[(df_filtered['net/nominal production rate max'] >= net_prod_min) & 
                           (df_filtered['net/nominal production rate max'] <= net_prod_max)]
 
-# Slider for average power consumption by stack
+# Unified slider for average power consumption (affects both stack and system)
 power_min, power_max = st.sidebar.slider(
-    'Average Power Consumption by Stack (kWh/Nm³)',
-    float(df_filtered['average power consumption by stack combined'].min()),
-    float(df_filtered['average power consumption by stack combined'].max()),
-    (float(df_filtered['average power consumption by stack combined'].min()), float(df_filtered['average power consumption by stack combined'].max()))
+    'Average Power Consumption (kWh/Nm³)',
+    float(min(df_filtered['average power consumption by stack combined'].min(), df_filtered['average power consumption by system'].min())),
+    float(max(df_filtered['average power consumption by stack combined'].max(), df_filtered['average power consumption by system'].max())),
+    (float(min(df_filtered['average power consumption by stack combined'].min(), df_filtered['average power consumption by system'].min())),
+     float(max(df_filtered['average power consumption by stack combined'].max(), df_filtered['average power consumption by system'].max())))
 )
 
+# Filter data for stack and system using the unified power consumption slider
 df_filtered_stack = df_filtered[(df_filtered['average power consumption by stack combined'] >= power_min) & 
                                 (df_filtered['average power consumption by stack combined'] <= power_max)]
 
-# Slider for average power consumption by system
-system_power_min, system_power_max = st.sidebar.slider(
-    'Average Power Consumption by System (kWh/Nm³)',
-    float(df_filtered['average power consumption by system'].min()),
-    float(df_filtered['average power consumption by system'].max()),
-    (float(df_filtered['average power consumption by system'].min()), float(df_filtered['average power consumption by system'].max()))
-)
-
-df_filtered_system = df_filtered[(df_filtered['average power consumption by system'] >= system_power_min) & 
-                                 (df_filtered['average power consumption by system'] <= system_power_max)]
+df_filtered_system = df_filtered[(df_filtered['average power consumption by system'] >= power_min) & 
+                                 (df_filtered['average power consumption by system'] <= power_max)]
 
 # Scatter plot for stack data
 fig_stack = px.scatter(
@@ -86,11 +80,14 @@ fig_stack = px.scatter(
         'net/nominal production rate max': 'Net production rate (Nm³/h)',
         'average power consumption by stack combined': 'Avg Power Consumption by Stack (kWh/Nm³)'
     },
-    template='plotly_white'
+    template='plotly_white',
+    height=1050,  # Increased height
+    width=1050   # Increased width
 )
 
+# Adjust X-axis to start from a negative value (-10) to avoid cutting data points close to 0
 fig_stack.update_layout(
-    xaxis=dict(range=[-40, net_prod_max]),  # Ensure the x-axis starts at 0
+    xaxis=dict(range=[-10, net_prod_max]),  # Starting at -10 to avoid cutting
     yaxis=dict(range=[2.9, power_max])  # Ensure the y-axis starts at 0
 )
 
@@ -106,12 +103,15 @@ fig_system = px.scatter(
         'net/nominal production rate max': 'Net production rate (Nm³/h)',
         'average power consumption by system': 'Avg Power Consumption by System (kWh/Nm³)'
     },
-    template='plotly_white'
+    template='plotly_white',
+    height=1050,  # Increased height
+    width=1050   # Increased width
 )
 
+# Adjust X-axis to start from a negative value (-10) to avoid cutting data points close to 0
 fig_system.update_layout(
-    xaxis=dict(range=[-40, net_prod_max]),  # Ensure the x-axis starts at 0
-    yaxis=dict(range=[2.91, system_power_max])  # Ensure the y-axis starts at 0
+    xaxis=dict(range=[-10, net_prod_max]),  # Starting at -10 to avoid cutting
+    yaxis=dict(range=[2.9, power_max])  # Ensure the y-axis starts at 0
 )
 
 # Display both plots
