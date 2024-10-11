@@ -9,7 +9,7 @@ image = Image.open('NitroVolt_Default.png')
 
 st.image(image, width=500)
 
-st.title("Electrolyzer Data Analysis")
+Title = st.title("Electrolyzer Data Analysis")
 
 # When using excel
 #file_path = 'Book1.xlsx'
@@ -92,9 +92,14 @@ fig_stack = px.scatter(
 
 fig_stack.update_layout(
     xaxis=dict(range=[-10, net_prod_max]),  
-    yaxis=dict(range=[2.9, power_max]),    
-    legend=dict(font=dict(size=13))         
+    yaxis=dict(range=[2.9, power_max])    
 )
+
+fig_stack.update_layout(
+    xaxis=dict(range=[-10, net_prod_max], title_font=dict(size=20), tickfont=dict(size=16)),  # Font size for x-axis
+    yaxis=dict(range=[2.9, power_max], title_font=dict(size=20), tickfont=dict(size=16)),    # Font size for y-axis
+    legend=dict(title="Technology",title_font=dict(size=22), font=dict(size=22)),  # Title and font size for the legend
+    title_font=dict(size=25) )
 
 # Scatter plot for System
 fig_system = px.scatter(
@@ -110,14 +115,20 @@ fig_system = px.scatter(
     },
     template='plotly_white',
     height=1050, 
-    width=1050   
+    width=1050
 )
 
 
 fig_system.update_layout(
     xaxis=dict(range=[-10, net_prod_max]), 
-    yaxis=dict(range=[2.9, power_max]),     
-    legend=dict(font=dict(size=18))        
+    yaxis=dict(range=[2.9, power_max])
+)
+
+fig_system.update_layout(
+    xaxis=dict(range=[-10, net_prod_max], title_font=dict(size=20), tickfont=dict(size=16)),  # Font size for x-axis
+    yaxis=dict(range=[2.9, power_max], title_font=dict(size=20), tickfont=dict(size=16)),    # Font size for y-axis
+    legend=dict(title="Technology", title_font=dict(size=22), font=dict(size=22)),  # Title and font size for the legend
+    title_font=dict(size=22)  # Font size for the title
 )
 
 st.plotly_chart(fig_stack, use_container_width=True)
