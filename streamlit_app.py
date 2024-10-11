@@ -141,7 +141,7 @@ st.markdown("https://docs.google.com/spreadsheets/d/1X9WFXng7z1fJmlgLHs0YCmQAzgn
 st.title(":mailbox: Get in Touch with Us!")
 
 contact_form = """
-<from action="https://formsubmit.co/tyuiopazx124@gmail.com" method="POST">
+<form action="https://formsubmit.co/tcm@nitrovolt.com" method="POST">
      <input type="hidden" name="captcha" value="false">
      <input type="text" name = "name" placeholder="Your name" required>
      <input type="email" name = "email" placeholder="Your email" required>
