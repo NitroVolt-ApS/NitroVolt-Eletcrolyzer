@@ -17,7 +17,7 @@ Title = st.title("Electrolyzer Data Analysis")
 
 sheet_url='https://docs.google.com/spreadsheets/d/e/2PACX-1vRRBGdnCxVwSG6HoCNVI1inzyAFjEYtccE-0OJojOUOwSqa2V82cpTZ4lhWYszI3kqYNRxs5xa4TO7O/pub?output=csv'
 
-df = pd.read_csv(sheet_url, header=7)
+df = pd.read_csv(sheet_url,header=1)
 
 # Convert columns to numeric just in case
 df['net/nominal production rate max'] = pd.to_numeric(df['net/nominal production rate max'], errors='coerce')
