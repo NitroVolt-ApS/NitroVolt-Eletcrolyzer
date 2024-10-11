@@ -1,8 +1,6 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-import gspread
-from oauth2client.service_account import ServiceAccountCredentials
 from PIL import Image
 
 st.set_page_config(page_title="Electrolyzer Data Analysis", page_icon=":bar_chart:", layout="wide")
