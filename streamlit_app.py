@@ -72,7 +72,6 @@ df_filtered_system = df_filtered[(df_filtered['average power consumption by syst
 st.sidebar.header("Customization Options")
 marker_size = st.sidebar.slider("Marker Size", 5, 30, 12)
 title_font_size = st.sidebar.slider("Title Font Size", 15, 40, 25)
-header_font_size = st.sidebar.slider("Header Font Size", 12, 30, 20)
 axis_font_size = st.sidebar.slider("Axis Font Size", 10, 25, 16)
 legend_font_size = st.sidebar.slider("Legend Font Size", 10, 25, 22)
 
