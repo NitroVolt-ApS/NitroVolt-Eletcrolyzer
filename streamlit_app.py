@@ -3,10 +3,11 @@ import pandas as pd
 import plotly.express as px
 from PIL import Image
 import streamlit.components.v1 as components
+from streamlit_plotly_events import plotly_events
 
 st.set_page_config(page_title="Electrolyzer Data Analysis", page_icon=":bar_chart:", layout="wide")
 
-image = Image.open('NitroVolt_Default(2).png')
+image = Image.open('NitroVolt_Default.png')
 
 st.image(image, width=500)
 
@@ -126,28 +127,15 @@ fig_stack = px.scatter(
     width=1050
 )
 
-# Show plot
-st.plotly_chart(fig_stack)
+# Capture the click event on the chart using plotly_events
+clicked_points = plotly_events(fig_stack, click_event=True, hover_event=False, select_event=False, override_height=1050, override_width=1050)
 
-# HTML & JavaScript to handle clicks and redirect
-click_js = """
-<script>
-    // Wait until Plotly chart is fully rendered
-    window.addEventListener('DOMContentLoaded', (event) => {
-        var myPlot = document.querySelector('div[data-testid="stPlotlyChart"] div.plot-container');
-        myPlot.on('plotly_click', function(data){
-            var pointData = data.points[0];
-            var url = pointData.customdata[0];  // Get the URL from the custom data
-            if (url) {
-                window.open(url, '_blank');  // Redirect to the URL in a new tab
-            }
-        });
-    });
-</script>
-"""
-
-# Insert the JavaScript into the page
-components.html(click_js, height=0)
+# If a point is clicked, redirect to the corresponding link
+if clicked_points:
+    reference_link = clicked_points[0]['customdata'][0]  # Get the reference link from the custom data
+    st.write(f"Redirecting to: {reference_link}")
+    st.write(f"[Open link]({reference_link})")
+    st.experimental_rerun()
 
 # Scatter plot for system
 fig_system = px.scatter(
@@ -200,3 +188,5 @@ def local_css(file_name):
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 local_css("style.css")
+
+
