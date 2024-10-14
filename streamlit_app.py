@@ -7,7 +7,7 @@ from streamlit_plotly_events import plotly_events
 
 st.set_page_config(page_title="Electrolyzer Data Analysis", page_icon=":bar_chart:", layout="wide")
 
-image = Image.open('NitroVolt_Default.png')
+image = Image.open('NitroVolt_Default(2).png')
 
 st.image(image, width=500)
 
