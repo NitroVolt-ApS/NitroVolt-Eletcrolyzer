@@ -2,14 +2,20 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 from PIL import Image
+import streamlit.components.v1 as components
 
 st.set_page_config(page_title="Electrolyzer Data Analysis", page_icon=":bar_chart:", layout="wide")
 
-image = Image.open('NitroVolt_Default(2).png')
+image = Image.open('NitroVolt_Default.png')
 
 st.image(image, width=500)
 
 Title = st.title("Electrolyzer Data Analysis")
+
+st.header("Suggestions for new electrolyzers")
+
+st.write("Welcome to our page! This online tool is a side project by NitroVolt, a Danish startup dedicated to revolutionizing sustainable ammonia production. We value your feedback and are committed to continuously improving and expanding our database. If you have any corrections or would like to suggest a new electrolyzer, please provide us with a datasheet and relevant links.")
+st.markdown("https://docs.google.com/spreadsheets/d/1X9WFXng7z1fJmlgLHs0YCmQAzgnc_U9PseOId34QzHk/edit?usp=sharing")
 
 sheet_url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRRBGdnCxVwSG6HoCNVI1inzyAFjEYtccE-0OJojOUOwSqa2V82cpTZ4lhWYszI3kqYNRxs5xa4TO7O/pub?output=csv'
 df = pd.read_csv(sheet_url, header=1)
@@ -19,6 +25,9 @@ df['net/nominal production rate max'] = pd.to_numeric(df['net/nominal production
 df['average power consumption by stack min'] = pd.to_numeric(df['average power consumption by stack min'], errors='coerce')
 df['average power consumption by stack max'] = pd.to_numeric(df['average power consumption by stack max'], errors='coerce')
 df['average power consumption by system'] = pd.to_numeric(df['average power consumption by system'], errors='coerce')
+
+# Load the sheet and convert 'reference' to string for URLs
+df['reference'] = df['reference'].astype(str)
 
 # Combine min and max for the stack
 df['average power consumption by stack combined'] = df['average power consumption by stack min'].combine_first(df['average power consumption by stack max'])
@@ -82,6 +91,7 @@ fig_stack = px.scatter(
     y='average power consumption by stack combined',
     color='technology',
     hover_data=['manufacturer', 'technology', 'Location'],
+    custom_data=['reference'],
     title='Net Production Rate vs Avg Power Consumption by Stack',
     labels={
         'net/nominal production rate max': 'Net production rate (Nm³/h)',
@@ -99,7 +109,45 @@ fig_stack.update_layout(
     title_font=dict(size=title_font_size)
 )
 
-fig_stack.update_traces(marker=dict(size=marker_size))
+fig_stack = px.scatter(
+    df_filtered,
+    x='net/nominal production rate max',
+    y='average power consumption by stack combined',
+    color='technology',
+    hover_data=['manufacturer', 'technology', 'Location'],  # Remove reference from hover data
+    custom_data=['reference'],  # Keep reference in customdata for redirection
+    title='Net Production Rate vs Avg Power Consumption by Stack',
+    labels={
+        'net/nominal production rate max': 'Net production rate (Nm³/h)',
+        'average power consumption by stack combined': 'Avg Power Consumption by Stack (kWh/Nm³)'
+    },
+    template='plotly_white',
+    height=1050,
+    width=1050
+)
+
+# Show plot
+st.plotly_chart(fig_stack)
+
+# HTML & JavaScript to handle clicks and redirect
+click_js = """
+<script>
+    // Wait until Plotly chart is fully rendered
+    window.addEventListener('DOMContentLoaded', (event) => {
+        var myPlot = document.querySelector('div[data-testid="stPlotlyChart"] div.plot-container');
+        myPlot.on('plotly_click', function(data){
+            var pointData = data.points[0];
+            var url = pointData.customdata[0];  // Get the URL from the custom data
+            if (url) {
+                window.open(url, '_blank');  // Redirect to the URL in a new tab
+            }
+        });
+    });
+</script>
+"""
+
+# Insert the JavaScript into the page
+components.html(click_js, height=0)
 
 # Scatter plot for system
 fig_system = px.scatter(
@@ -124,14 +172,15 @@ fig_system.update_layout(
     legend=dict(title="Technology", title_font=dict(size=legend_font_size), font=dict(size=legend_font_size)),
     title_font=dict(size=title_font_size)
 )
-fig_system.update_traces(marker=dict(size=marker_size))
+fig_system.update_traces(marker=dict(size=marker_size), 
+    hovertemplate='<b>Electrolyzer technology</b>: %{customdata[1]}<br>' + 
+                  '<b>Net production rate</b>: %{x} Nm³/h<br>' + 
+                  '<b>System average power consumption</b>: %{y} kWh/Nm³<br>' + 
+                  '<b>Manufacturer</b>: %{customdata[0]}<br>' + 
+                  '<b>Origin</b>: %{customdata[2]}<extra></extra>')
 
 st.plotly_chart(fig_stack, use_container_width=True)
 st.plotly_chart(fig_system, use_container_width=True)
-
-st.header("Suggestions for new electrolyzers")
-
-st.markdown("https://docs.google.com/spreadsheets/d/1X9WFXng7z1fJmlgLHs0YCmQAzgnc_U9PseOId34QzHk/edit?usp=sharing")
 
 st.title(":mailbox: Get in Touch with Us!")
 
