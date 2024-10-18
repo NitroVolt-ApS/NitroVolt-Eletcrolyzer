@@ -16,24 +16,19 @@ st.write("Welcome to the Electrolyzer Database, a comprehensive survey of electr
 sheet_url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRRBGdnCxVwSG6HoCNVI1inzyAFjEYtccE-0OJojOUOwSqa2V82cpTZ4lhWYszI3kqYNRxs5xa4TO7O/pub?output=csv'
 df = pd.read_csv(sheet_url, header=1)
 
-# Convert columns to numeric just in case
+# convert columns to numeric just in case
 df['net/nominal production rate max'] = pd.to_numeric(df['net/nominal production rate max'], errors='coerce')
 df['average power consumption by stack min'] = pd.to_numeric(df['average power consumption by stack min'], errors='coerce')
 df['average power consumption by stack max'] = pd.to_numeric(df['average power consumption by stack max'], errors='coerce')
 df['average power consumption by system'] = pd.to_numeric(df['average power consumption by system'], errors='coerce')
 
-# Filter out rows where technology is "membrane free"
-df = df[df['technology'] != 'membrane free']
-
-# Load the sheet and convert 'reference' to string for URLs
-df['reference'] = df['reference'].astype(str)
-
-# Combine min and max for the stack
+# combine min and max for the stack
 df['average power consumption by stack combined'] = df['average power consumption by stack min'].combine_first(df['average power consumption by stack max'])
 
+# remove missing values from production rate
 df_filtered = df.dropna(subset=['net/nominal production rate max'])
 
-# Filter by 'net/nominal production rate max' <= 1200
+# Filter by production rate <= 1200
 df_filtered = df_filtered[df_filtered['net/nominal production rate max'] <= 1200]
 
 st.sidebar.header("Filter Options")
@@ -61,7 +56,7 @@ net_prod_min, net_prod_max = st.sidebar.slider(
 df_filtered = df_filtered[(df_filtered['net/nominal production rate max'] >= net_prod_min) & 
                           (df_filtered['net/nominal production rate max'] <= net_prod_max)]
 
-# Slider for power consumption (changes stack and system at the same time)
+# Slider for power consumption 
 power_min, power_max = st.sidebar.slider(
     'Average Power Consumption (kWh/Nm³)',
     float(min(df_filtered['average power consumption by stack combined'].min(), df_filtered['average power consumption by system'].min())),
@@ -84,7 +79,7 @@ axis_font_size = st.sidebar.slider("Axis Font Size", 10, 25, 16)
 legend_font_size = st.sidebar.slider("Legend Font Size", 10, 25, 22)
 
 
-
+# Scatter plot for stack 
 fig_stack = px.scatter(
     df_filtered,
     x='net/nominal production rate max',
@@ -108,6 +103,7 @@ fig_stack.update_layout(
     title_font=dict(size=title_font_size)
 )
 
+# Hoverdata layout
 fig_stack.update_traces(marker=dict(size=marker_size), 
     hovertemplate='<b>Electrolyzer technology</b>: %{customdata[1]}<br>' + 
                   '<b>Net production rate</b>: %{x} Nm³/h<br>' + 
@@ -138,6 +134,7 @@ fig_system.update_layout(
     legend=dict(title="Technology", title_font=dict(size=legend_font_size), font=dict(size=legend_font_size)),
     title_font=dict(size=title_font_size)
 )
+# Hoverdata layout
 fig_system.update_traces(marker=dict(size=marker_size), 
     hovertemplate='<b>Electrolyzer technology</b>: %{customdata[1]}<br>' + 
                   '<b>Net production rate</b>: %{x} Nm³/h<br>' + 
@@ -145,9 +142,11 @@ fig_system.update_traces(marker=dict(size=marker_size),
                   '<b>Manufacturer</b>: %{customdata[0]}<br>' + 
                   '<b>Origin</b>: %{customdata[2]}<extra></extra>')
 
+# Display plots
 st.plotly_chart(fig_stack, use_container_width=True)
 st.plotly_chart(fig_system, use_container_width=True)
 
+#Contact Form
 st.title(":mailbox: Get in Touch with Us!")
 
 contact_form = """
