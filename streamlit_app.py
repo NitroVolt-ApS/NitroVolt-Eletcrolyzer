@@ -22,6 +22,12 @@ df['average power consumption by stack min'] = pd.to_numeric(df['average power c
 df['average power consumption by stack max'] = pd.to_numeric(df['average power consumption by stack max'], errors='coerce')
 df['average power consumption by system'] = pd.to_numeric(df['average power consumption by system'], errors='coerce')
 
+# round up
+df['net/nominal production rate max'] = df['net/nominal production rate max'].round(0)
+df['average power consumption by stack min'] = df['average power consumption by stack min'].round(1)
+df['average power consumption by stack max'] = df['average power consumption by stack max'].round(1)
+df['average power consumption by system'] = df['average power consumption by system'].round(1)
+
 # combine min and max for the stack
 df['average power consumption by stack combined'] = df['average power consumption by stack min'].combine_first(df['average power consumption by stack max'])
 
