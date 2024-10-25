@@ -156,7 +156,7 @@ st.plotly_chart(fig_system, use_container_width=True)
 st.title(":mailbox: Get in Touch with Us!")
 
 contact_form = """
-<form action="https://formsubmit.co/tcm@nitrovolt.com" method="POST">
+<form action="https://formsubmit.co/ElectrolyzerDatabase@nitrovolt.com" method="POST">
      <input type="hidden" name="captcha" value="false">
      <input type="text" name="name" placeholder="Your name" required>
      <input type="email" name="email" placeholder="Your email" required>
