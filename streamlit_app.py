@@ -37,7 +37,26 @@ df_filtered = df.dropna(subset=['net/nominal production rate max'])
 # Filter by production rate <= 1200
 df_filtered = df_filtered[df_filtered['net/nominal production rate max'] <= 1200]
 
-st.sidebar.header("Filter Options")
+# Sidebar for unit selection and filters
+st.sidebar.header("Filter and Unit Options")
+units = st.sidebar.selectbox("Select Units", ["Nm³/h & kWh/Nm³", "kg/h & kWh/kg"])
+
+# Convert units if selected
+if units == "kg/h & kWh/kg":
+    # Assuming specific values for conversion
+    df_filtered['net/nominal production rate max'] = df_filtered['net/nominal production rate max'] * 0.08988  # Nm³ to kg
+    df_filtered['average power consumption by stack combined'] /= 0.08988  # Nm³ to kg
+    df_filtered['average power consumption by system'] /= 0.08988  # Nm³ to kg
+    x_label = 'Net production rate (kg/h)'
+    y_label = 'Average power consumtion (kWh/kg) '
+    y_label_stack = 'Avg Power Consumption by Stack (kWh/kg)'
+    y_label_system = 'Avg Power Consumption by System (kWh/kg)'
+else:
+    x_label = 'Net production rate (Nm³/h)'
+    y_label = 'Average power consumtion (Nm³/h) '
+    y_label_stack = 'Avg Power Consumption by Stack (kWh/Nm³)'
+    y_label_system = 'Avg Power Consumption by System (kWh/Nm³)'
+
 
 # Filter by manufacturer
 companies = sorted(df_filtered['manufacturer'].unique())
@@ -58,10 +77,10 @@ else:
     unique_stack = df['average power consumption by stack combined'].nunique()
     unique_system = df['average power consumption by system'].nunique()
 
-    # No sidebat if only one company selected
+    # No sidebar if only one company selected
     if len(selected_companies) > 1 or unique_stack > 1 or unique_system >1:
         net_prod_min, net_prod_max = st.sidebar.slider(
-            'Net/Nominal Production Rate Max (Nm³/h)',
+            'Net/Nominal Production Rate',
             int(df_filtered['net/nominal production rate max'].min()),
             int(df_filtered['net/nominal production rate max'].max()),
             (int(df_filtered['net/nominal production rate max'].min()), int(df_filtered['net/nominal production rate max'].max()))
@@ -75,7 +94,7 @@ else:
 
         if power_min < power_max:
             power_min, power_max = st.sidebar.slider(
-                'Average Power Consumption (kWh/Nm³)',
+                'Average Power Consumption',
                 float(power_min),
                 float(power_max),
                 (float(power_min), float(power_max))
@@ -117,22 +136,23 @@ power_max_all = max(df_filtered['average power consumption by stack combined'].m
                 df_filtered['average power consumption by system'].max())
 
 # Plotting for stack
-if not df_with_stack_only.empty or not df_with_both.empty:
+if not df_filtered.empty:
     fig_stack = px.scatter(
-        pd.concat([df_with_stack_only, df_with_both]),
+        df_filtered,
         x='net/nominal production rate max',
         y='average power consumption by stack combined',
         color='technology',
         hover_data=['manufacturer', 'technology', 'Location'],
         title='Net Production Rate vs Avg Power Consumption by Stack',
         labels={
-            'net/nominal production rate max': 'Net production rate (Nm³/h)',
-            'average power consumption by stack combined': 'Avg Power Consumption by Stack (kWh/Nm³)'
+            'net/nominal production rate max': x_label,
+            'average power consumption by stack combined': y_label_stack
         },
         template='plotly_white',
-        height=1050,
-        width=1050
+        height=600,
+        width=800
     )
+    
     fig_stack.update_layout(
         xaxis=dict(range=[-10, net_prod_max_all], title_font=dict(size=axis_font_size), tickfont=dict(size=axis_font_size)),
         yaxis=dict(range=[2.9, power_max_all], title_font=dict(size=axis_font_size), tickfont=dict(size=axis_font_size)),
@@ -147,22 +167,23 @@ if not df_with_stack_only.empty or not df_with_both.empty:
     st.plotly_chart(fig_stack, use_container_width=True)
 
 # Plotting for system
-if not df_with_system_only.empty or not df_with_both.empty:
+if not df_filtered.empty:
     fig_system = px.scatter(
-        pd.concat([df_with_system_only, df_with_both]),
+        df_filtered,
         x='net/nominal production rate max',
         y='average power consumption by system',
         color='technology',
         hover_data=['manufacturer', 'technology', 'Location'],
         title='Net Production Rate vs Avg Power Consumption by System',
         labels={
-            'net/nominal production rate max': 'Net production rate (Nm³/h)',
-            'average power consumption by system': 'Avg Power Consumption by System (kWh/Nm³)'
+            'net/nominal production rate max': x_label,
+            'average power consumption by system': y_label_system
         },
         template='plotly_white',
-        height=1050,
-        width=1050
+        height=600,
+        width=800
     )
+
     fig_system.update_layout(
         xaxis=dict(range=[-10, net_prod_max_all], title_font=dict(size=axis_font_size), tickfont=dict(size=axis_font_size)),
         yaxis=dict(range=[2.9, power_max_all], title_font=dict(size=axis_font_size), tickfont=dict(size=axis_font_size)),
@@ -175,7 +196,6 @@ if not df_with_system_only.empty or not df_with_both.empty:
                       '<b>Manufacturer</b>: %{customdata[0]}<br>' +
                       '<b>Origin</b>: %{customdata[2]}<extra></extra>')
     st.plotly_chart(fig_system, use_container_width=True)
-
 
 #Contact Form
 st.title(":mailbox: Get in Touch with Us!")
