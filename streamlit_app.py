@@ -13,8 +13,7 @@ Title = st.title("Electrolyzer Database")
 
 st.write("Welcome to the Electrolyzer Database, a comprehensive survey of electrolyzers on the market! You can consume the information via a GoogleSheet [Database](https://docs.google.com/spreadsheets/d/1X9WFXng7z1fJmlgLHs0YCmQAzgnc_U9PseOId34QzHk/edit?usp=sharing) as well as via our summary plots on this page. This online tool is a side project by NitroVolt, a Danish startup dedicated to revolutionizing sustainable ammonia production via a novel electrochemical process. We value your feedback and are committed to continuously improving and expanding our database. If you have any corrections or would like to suggest a new electrolyzer add a comment in our spreadsheet or reach out to us via the contact form at the end of this page. In case you want to suggest the addition of a missing electrolyzer, please provide us with a datasheet and relevant links. You can find the corresponding datasheets of the electrolyzers in the following link:  [Datasheets](https://drive.google.com/drive/folders/17NjDjckG777p0ktunupvzcdwosFlkCS3).")
 
-sheet_url = 'https://docs.google.com/spreadsheets/d/1xNHhL70Z7gKNPsjjWr-GdHjxN-hDzcnlyRPiPn94aBk/edit?gid=834320440#gid=834320440'
-#https://docs.google.com/spreadsheets/d/1xNHhL70Z7gKNPsjjWr-GdHjxN-hDzcnlyRPiPn94aBk/edit?gid=834320440#gid=834320440
+sheet_url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRNW-lIkcCW6IskVG6dES9JZ6c92slb5KNmQ-N3ACO9ugCPBsuciBu8asAiKye3cl9l7C8cU8CIajbM/pub?output=csv'
 df = pd.read_csv(sheet_url, header=1)
 
 # convert columns to numeric just in case
