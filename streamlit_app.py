@@ -3,7 +3,7 @@ import pandas as pd
 import plotly.express as px
 from PIL import Image
 
-st.set_page_config(page_title="Electrolyzer Data Analysis", page_icon=":bar_chart:", layout="wide")
+st.set_page_config(page_title="NitroVolt Electrolyzer Database", page_icon=":bar_chart:", layout="wide")
 
 image = Image.open('NitroVolt_Default(2).png')
 
