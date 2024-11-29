@@ -217,4 +217,4 @@ def local_css(file_name):
 
 local_css("style.css")
 
-st.write("Copyright 2024 NitroVolt ApS. This tool is licensed under the GNU General Public Licenses v3.0.")
+st.write("Copyright 2024 NitroVolt ApS. This Streamlit tool (including the spreadsheet on which is built) is licensed under the GNU General Public Licenses v3.0.")
