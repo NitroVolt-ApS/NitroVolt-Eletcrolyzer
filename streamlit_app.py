@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 from PIL import Image
+import numpy as np
 
 st.set_page_config(page_title="NitroVolt Electrolyzer Database", page_icon=":bar_chart:", layout="wide")
 
@@ -79,18 +80,33 @@ else:
 
     # No sidebar if only one company selected
     if len(selected_companies) > 1 or unique_stack > 1 or unique_system >1:
-        net_prod_min, net_prod_max = st.sidebar.slider(
-            'Net/Nominal Production Rate',
-            int(df_filtered['net/nominal production rate max'].min()),
-            int(df_filtered['net/nominal production rate max'].max()),
-            (int(df_filtered['net/nominal production rate max'].min()), int(df_filtered['net/nominal production rate max'].max()))
-        )
+        min_val = int(df_filtered['net/nominal production rate max'].min())
+        max_val = int(df_filtered['net/nominal production rate max'].max())
+
+        if min_val == max_val:
+            net_prod_min, net_prod_max = min_val, max_val
+            st.sidebar.write(f"Net/Nominal Production Rate: {min_val}")
+        else:
+            net_prod_min, net_prod_max = st.sidebar.slider(
+                'Net/Nominal Production Rate',
+                min_val,
+                max_val,
+                (min_val, max_val)
+            )
+        
         df_filtered = df_filtered[(df_filtered['net/nominal production rate max'] >= net_prod_min) & 
                               (df_filtered['net/nominal production rate max'] <= net_prod_max)]
 
     # Handle power consumption slider
-        power_min = min(df_filtered['average power consumption by stack combined'].min(), df_filtered['average power consumption by system'].min())
-        power_max = max(df_filtered['average power consumption by stack combined'].max(), df_filtered['average power consumption by system'].max())
+        power_min = np.nanmin([
+            df_filtered['average power consumption by stack combined'].min(),
+            df_filtered['average power consumption by system'].min()
+        ])
+
+        power_max = np.nanmax([
+            df_filtered['average power consumption by stack combined'].max(),
+            df_filtered['average power consumption by system'].max()
+        ])
 
         if power_min < power_max:
             power_min, power_max = st.sidebar.slider(
