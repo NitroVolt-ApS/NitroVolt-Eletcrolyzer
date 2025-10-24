@@ -36,7 +36,7 @@ df['average power consumption by stack combined'] = df['average power consumptio
 df_filtered = df.dropna(subset=['net/nominal production rate max'])
 
 # Filter by production rate <= 1200
-df_filtered = df_filtered[df_filtered['net/nominal production rate max'] <= 1200]
+#df_filtered = df_filtered[df_filtered['net/nominal production rate max'] <= 1200]
 
 # Sidebar for unit selection and filters
 st.sidebar.header("Filter and Unit Options")
@@ -64,7 +64,7 @@ companies = sorted(df_filtered['manufacturer'].unique())
 selected_companies = st.sidebar.multiselect("Select Companies", companies, default=companies)
 
 # Filter by Location
-locations = sorted(df_filtered['Location'].unique())
+locations = sorted(df_filtered['Location'].dropna().astype(str).unique())
 selected_locations = st.sidebar.multiselect("Select Locations", locations, default=locations)
 
 # Apply the filters
